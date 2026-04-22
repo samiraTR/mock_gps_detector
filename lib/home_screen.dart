@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mock_gps_detector/package_screen.dart';
 
 class MockGPSDetectionResult {
   final bool isMockLocationEnabled;
@@ -233,6 +234,7 @@ class _GPSDetectorScreenState extends State<GPSDetectorScreen>
                     ],
                     const SizedBox(height: 24),
                     _buildScanButton(),
+                    _buildNavButton(),
                   ],
                 ),
               ),
@@ -240,6 +242,18 @@ class _GPSDetectorScreenState extends State<GPSDetectorScreen>
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildNavButton() {
+    return ElevatedButton(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const PackageScreen()),
+        );
+      },
+      child: const Text('Go to Package Screen'),
     );
   }
 
@@ -435,8 +449,8 @@ class _GPSDetectorScreenState extends State<GPSDetectorScreen>
           Icon(icon, color: color, size: 18),
           const SizedBox(height: 8),
           Text(label,
-              style: TextStyle(
-                  color: const Color(0xFF4A6080),
+              style: const TextStyle(
+                  color: Color(0xFF4A6080),
                   fontSize: 10,
                   fontFamily: 'monospace',
                   letterSpacing: 1)),
