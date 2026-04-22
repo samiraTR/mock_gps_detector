@@ -9,6 +9,7 @@ class MockGPSDetectionResult {
   // final String? activePackageName;
   final List<String> detectedMockApps;
   final List<String> runningMockServices;
+  final bool? isDeveloperOptionsEnabled;
   final String riskLevel; // LOW, MEDIUM, HIGH
   final String message;
 
@@ -18,6 +19,7 @@ class MockGPSDetectionResult {
     required this.isFromMockProvider,
     required this.detectedMockApps,
     required this.runningMockServices,
+    required this.isDeveloperOptionsEnabled,
     required this.riskLevel,
     required this.message,
   });
@@ -29,6 +31,7 @@ class MockGPSDetectionResult {
       isFromMockProvider: map['isFromMockProvider'] ?? false,
       detectedMockApps: List<String>.from(map['detectedMockApps'] ?? []),
       runningMockServices: List<String>.from(map['runningMockServices'] ?? []),
+      isDeveloperOptionsEnabled: map['isDeveloperOptionsEnabled'] ?? false,
       riskLevel: map['riskLevel'] ?? 'LOW',
       message: map['message'] ?? '',
     );
@@ -220,8 +223,9 @@ class _GPSDetectorScreenState extends State<GPSDetectorScreen>
                     if (_result != null) ...[
                       const SizedBox(height: 16),
                       _buildResultCards(),
-                      if (_result!.hasActiveMockService ||
-                          _result!.runningMockServices.isNotEmpty) ...[
+                      if (_result!.isDeveloperOptionsEnabled == true) ...[
+                        // if (_result!.hasActiveMockService ||
+                        //     _result!.runningMockServices.isNotEmpty) ...[
                         const SizedBox(height: 16),
                         _buildServiceControlPanel(),
                       ],
@@ -229,10 +233,10 @@ class _GPSDetectorScreenState extends State<GPSDetectorScreen>
                         const SizedBox(height: 16),
                         _buildDetectedAppsList(),
                       ],
-                      if (_result!.runningMockServices.isNotEmpty) ...[
-                        const SizedBox(height: 16),
-                        _buildRunningServicesList(),
-                      ],
+                      // if (_result!.runningMockServices.isNotEmpty) ...[
+                      //   const SizedBox(height: 16),
+                      //   _buildRunningServicesList(),
+                      // ],
                     ],
                     const SizedBox(height: 24),
                     _buildScanButton(),

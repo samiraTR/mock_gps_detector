@@ -9,6 +9,7 @@ import android.location.Location
 import android.location.LocationManager
 import android.os.Build
 import android.provider.Settings
+import android.provider.Settings.Global
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -183,6 +184,7 @@ class GpsDetectorPlugin : FlutterPlugin, MethodCallHandler {
             "isMockLocationEnabled" to isMockEnabled,
             "hasActiveMockService"  to hasActiveSvc,
             "isFromMockProvider"    to isFromMock,
+            "isDeveloperOptionsEnabled" to isDeveloperOptionsEnabled(),
             "activePackageName"     to (activePackageName ?: ""),
             "detectedMockApps"      to allDetectedApps,
             "runningMockServices"   to allRunningServices,
@@ -315,6 +317,17 @@ class GpsDetectorPlugin : FlutterPlugin, MethodCallHandler {
         } catch (e: Exception) {
             false
         }
+    }
+
+    /**
+     * Checks if Developer Options are enabled on the device.
+     */
+    private fun isDeveloperOptionsEnabled(): Boolean {
+        return Settings.Secure.getInt(
+            context.contentResolver,
+            Settings.Global.DEVELOPMENT_SETTINGS_ENABLED,
+            0
+        ) != 0
     }
 
     private fun isLocationMocked(location: Location): Boolean {
