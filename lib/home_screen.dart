@@ -6,6 +6,7 @@ class MockGPSDetectionResult {
   final bool isMockLocationEnabled;
   final bool hasActiveMockService;
   final bool isFromMockProvider;
+  // final String? activePackageName;
   final List<String> detectedMockApps;
   final List<String> runningMockServices;
   final String riskLevel; // LOW, MEDIUM, HIGH
@@ -96,15 +97,16 @@ class _GPSDetectorScreenState extends State<GPSDetectorScreen>
     try {
       final Map<dynamic, dynamic> raw =
           await _channel.invokeMethod('detectMockGPS');
-
+      print('Raw detection result: $raw');
       final result = MockGPSDetectionResult.fromMap(raw);
 
       setState(() {
         _result = result;
         _isScanning = false;
-        _statusMessage = result.hasActiveMockService
-            ? '⚠️Active mock GPS service detected!'
-            : '✅ No mock GPS detected';
+        _statusMessage = result.message;
+
+        // ? '⚠️Active mock GPS service detected!'
+        // : '✅ No mock GPS detected';
       });
       //   _statusMessage = result.hasActiveMockService
       //       ? '⚠️ Active mock GPS service detected!'
