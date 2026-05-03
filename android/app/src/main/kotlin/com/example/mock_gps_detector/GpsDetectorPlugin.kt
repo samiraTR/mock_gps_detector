@@ -66,7 +66,7 @@ class GpsDetectorPlugin : FlutterPlugin, MethodCallHandler {
 
     // ── Keywords used for dynamic service detection ──────────────────────────
     private val locationKeywords = listOf(
-        "location", "gps", "mock", "fake", "spoof",
+        "location", "gps", "mock", "fake", "spoof","emulator",
         "position", "coordinate", "nmea", "provider"
     )
 

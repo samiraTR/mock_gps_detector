@@ -214,12 +214,12 @@ class _GPSDetectorScreenState extends State<GPSDetectorScreen>
             _buildHeader(),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(40),
                 child: Column(
                   children: [
                     _buildRadarWidget(),
                     const SizedBox(height: 24),
-                    _buildStatusCard(),
+                    // _buildStatusCard(),
                     if (_result != null) ...[
                       const SizedBox(height: 16),
                       _buildResultCards(),
@@ -240,7 +240,6 @@ class _GPSDetectorScreenState extends State<GPSDetectorScreen>
                     ],
                     const SizedBox(height: 24),
                     _buildScanButton(),
-                    _buildNavButton(),
                   ],
                 ),
               ),
@@ -251,17 +250,17 @@ class _GPSDetectorScreenState extends State<GPSDetectorScreen>
     );
   }
 
-  Widget _buildNavButton() {
-    return ElevatedButton(
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const PackageScreen()),
-        );
-      },
-      child: const Text('Go to Package Screen'),
-    );
-  }
+  // Widget _buildNavButton() {
+  //   return ElevatedButton(
+  //     onPressed: () {
+  //       Navigator.push(
+  //         context,
+  //         MaterialPageRoute(builder: (context) => const PackageScreen()),
+  //       );
+  //     },
+  //     child: const Text('Go to Package Screen'),
+  //   );
+  // }
 
   Widget _buildHeader() {
     return Container(
