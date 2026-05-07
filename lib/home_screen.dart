@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mock_gps_detector/package_screen.dart';
 
 class MockGPSDetectionResult {
   final bool isMockLocationEnabled;
   final bool hasActiveMockService;
   final bool isFromMockProvider;
-  // final String? activePackageName;
+  final String? activePackageName;
   final List<String> detectedMockApps;
   final List<String> runningMockServices;
   final bool? isDeveloperOptionsEnabled;
@@ -17,6 +16,7 @@ class MockGPSDetectionResult {
     required this.isMockLocationEnabled,
     required this.hasActiveMockService,
     required this.isFromMockProvider,
+    this.activePackageName,
     required this.detectedMockApps,
     required this.runningMockServices,
     required this.isDeveloperOptionsEnabled,
@@ -29,6 +29,7 @@ class MockGPSDetectionResult {
       isMockLocationEnabled: map['isMockLocationEnabled'] ?? false,
       hasActiveMockService: map['hasActiveMockService'] ?? false,
       isFromMockProvider: map['isFromMockProvider'] ?? false,
+      activePackageName: map['activePackageName'] as String?,
       detectedMockApps: List<String>.from(map['detectedMockApps'] ?? []),
       runningMockServices: List<String>.from(map['runningMockServices'] ?? []),
       isDeveloperOptionsEnabled: map['isDeveloperOptionsEnabled'] ?? false,
@@ -92,42 +93,43 @@ class _GPSDetectorScreenState extends State<GPSDetectorScreen>
   Future<void> _scanForMockGPS() async {
     setState(() {
       _isScanning = true;
-      _statusMessage = 'Scanning for mock GPS services…';
-      _result = null;
     });
-    _scanController.forward(from: 0);
 
     try {
-      final Map<dynamic, dynamic> raw =
-          await _channel.invokeMethod('detectMockGPS');
-      print('Raw detection result: $raw');
-      final result = MockGPSDetectionResult.fromMap(raw);
+      final Map<Object?, Object?> raw =
+          await _channel.invokeMethod('getDeveloperOptionsStatus') ?? {};
+
+      final bool devEnabled =
+          (raw['developerOptionsEnabled'] as bool?) ?? false;
+      final String? mockApp = raw['selectedMockLocationApp'] as String?;
 
       setState(() {
-        _result = result;
         _isScanning = false;
-        _statusMessage = result.message;
-
-        // ? '⚠️Active mock GPS service detected!'
-        // : '✅ No mock GPS detected';
+        _result = MockGPSDetectionResult(
+          isDeveloperOptionsEnabled: devEnabled,
+          activePackageName: mockApp,
+          isMockLocationEnabled: devEnabled, // dev options = potential mock
+          hasActiveMockService: mockApp != null,
+          isFromMockProvider: mockApp != null,
+          detectedMockApps: mockApp != null ? [mockApp] : [],
+          runningMockServices: [],
+          riskLevel: mockApp != null
+              ? 'HIGH'
+              : devEnabled
+                  ? 'MEDIUM'
+                  : 'LOW',
+          message: mockApp != null
+              ? 'Mock location app detected: $mockApp'
+              : devEnabled
+                  ? 'Developer options enabled on this device'
+                  : 'No mock GPS detected — device is clean',
+        );
       });
-      //   _statusMessage = result.hasActiveMockService
-      //       ? '⚠️ Active mock GPS service detected!'
-      //       : result.isMockLocationEnabled
-      //           ? '⚠️ Mock location setting is ON'
-      //           : '✅ No mock GPS detected';
-      // });
     } on PlatformException catch (e) {
       setState(() {
         _isScanning = false;
-        _statusMessage = 'Error: ${e.message}';
       });
-      _showSnackbar('Platform error: ${e.message}', isError: true);
-    } catch (e) {
-      setState(() {
-        _isScanning = false;
-        _statusMessage = 'Unexpected error occurred';
-      });
+      _showSnackbar('Error: ${e.message}', isError: true);
     }
   }
 
@@ -224,8 +226,12 @@ class _GPSDetectorScreenState extends State<GPSDetectorScreen>
                       const SizedBox(height: 16),
                       _buildResultCards(),
                       if (_result!.isDeveloperOptionsEnabled == true) ...[
-                        // if (_result!.hasActiveMockService ||
-                        //     _result!.runningMockServices.isNotEmpty) ...[
+                        const SizedBox(height: 16),
+                        _buildDeveloperOptionsInfo(),
+                      ],
+                      if (_result!.isDeveloperOptionsEnabled == true &&
+                          (_result!.hasActiveMockService ||
+                              _result!.runningMockServices.isNotEmpty)) ...[
                         const SizedBox(height: 16),
                         _buildServiceControlPanel(),
                       ],
@@ -500,6 +506,88 @@ class _GPSDetectorScreenState extends State<GPSDetectorScreen>
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                   fontFamily: 'monospace')),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDeveloperOptionsInfo() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1A1A2A),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFF4488FF).withOpacity(0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              Icon(Icons.developer_mode, color: Color(0xFF4488FF), size: 16),
+              SizedBox(width: 8),
+              Text('DEVELOPER OPTIONS DETECTED',
+                  style: TextStyle(
+                      color: Color(0xFF4488FF),
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'monospace',
+                      letterSpacing: 1)),
+            ],
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Developer options are enabled on this device.',
+            style: TextStyle(
+                color: Color(0xFF8A9AB0),
+                fontSize: 12,
+                fontFamily: 'monospace',
+                height: 1.5),
+          ),
+          if (_result!.activePackageName != null &&
+              _result!.activePackageName!.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            const Text(
+              'Selected Mock Location App:',
+              style: TextStyle(
+                  color: Color(0xFFCCDDEE),
+                  fontSize: 11,
+                  fontFamily: 'monospace',
+                  fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 4),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF4488FF).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(6),
+                border:
+                    Border.all(color: const Color(0xFF4488FF).withOpacity(0.3)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.android, color: Color(0xFF4488FF), size: 14),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      _result!.activePackageName!,
+                      style: const TextStyle(
+                          color: Color(0xFFCCDDEE),
+                          fontSize: 11,
+                          fontFamily: 'monospace'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+          const SizedBox(height: 12),
+          _actionButton(
+            label: 'OPEN DEV OPTIONS',
+            icon: Icons.settings,
+            color: const Color(0xFF4488FF),
+            onTap: _openDeveloperOptions,
+          ),
         ],
       ),
     );
