@@ -1,0 +1,12 @@
+android/app/**
+android/build/**
+build/**
+ios/**
+macos/**
+linux/**
+windows/**
+web/**
+lib/home_screen.dart
+lib/main.dart
+lib/utility/**
+lib/model/**

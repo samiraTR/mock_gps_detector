@@ -1,34 +1,33 @@
-# Mock GPS Detector
+# mock_gps_detector
 
-A Flutter application that detects mock GPS services and apps on Android devices.
+Android Flutter plugin for detecting developer options state and selected mock location app.
 
-## Features
+## Installation
 
-- Detects installed mock GPS applications
-- Identifies running mock GPS services
-- Checks Android developer settings for mock location permission
-- Verifies if current location is from a mock provider
-- Provides risk assessment (Low, Medium, High)
-- Allows pausing/resuming detected mock services
-- Can open mock GPS apps for manual control
+```yaml
+dependencies:
+  mock_gps_detector: ^1.0.0
+```
 
-## Getting Started
+## Usage
 
-1. Ensure you have Flutter installed
-2. Clone this repository
-3. Run `flutter pub get` to install dependencies
-4. Run `flutter run` to start the app on a connected device
+```dart
+import 'package:mock_gps_detector/mock_gps_detector.dart';
 
-## Permissions
+final detector = MockGpsDetector();
+final status = await detector.getDeveloperOptionsStatus();
+```
 
-The app requires the following Android permissions:
-- `ACCESS_FINE_LOCATION` and `ACCESS_COARSE_LOCATION` for location access
-- `QUERY_ALL_PACKAGES` for checking installed applications (Android 11+)
+Returned keys:
+- `developerOptionsEnabled` (`bool`)
+- `selectedMockLocationApp` (`String?`)
+- `hasSelectedMockLocationApp` (`bool`)
 
-## Platform Support
+## Platform support
 
-Currently supports Android only. iOS support is not implemented.
+- Android: supported
+- iOS/macOS/web/windows/linux: not supported
 
-## Contributing
+## Example
 
-Feel free to submit issues and pull requests.
+See `example/lib/main.dart`.
