@@ -1,8 +1,8 @@
 name: mock_gps_detector
-description: A new Flutter project.
+description: GPS spoofing detection package for Flutter applications.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev 
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -17,6 +17,8 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
 version: 1.0.0+1
+homepage: https://github.com/samiraTR/mock_gps_detector
+
 
 environment:
   sdk: '>=3.1.3 <4.0.0'
@@ -35,10 +37,7 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  # detect_fake_location: ^2.3.2
-  # # permission_handler: ^12.0.1
-  # safe_device: ^1.3.8
-  # geolocator: ^14.0.2
+
 
 dev_dependencies:
   flutter_test:

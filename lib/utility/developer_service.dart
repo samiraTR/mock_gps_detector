@@ -14,7 +14,7 @@ class DeveloperOptionsService {
                   'getDeveloperOptionsStatus') ??
               {};
 
-      print('>>> RAW FROM KOTLIN: $raw'); // ← keep this temporarily
+      print('>>> RAW FROM KOTLIN: $raw'); 
 
       final bool devEnabled =
           (raw['developerOptionsEnabled'] as bool?) ?? false;
@@ -27,7 +27,7 @@ class DeveloperOptionsService {
       };
     } on MissingPluginException catch (e) {
       print(
-          '>>> MissingPluginException: $e'); // ← tells you method name mismatch
+          '>>> MissingPluginException: $e'); 
       return _emptyStatus();
     } on PlatformException catch (e) {
       print('>>> PlatformException: $e');
